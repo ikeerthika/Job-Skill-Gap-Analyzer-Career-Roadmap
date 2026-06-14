@@ -1,0 +1,370 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🚀 Job Skill Gap Analyzer</title>
+<link rel="icon" href="{% static 'favicon.ico' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* ===== Global ===== */
+*{box-sizing:border-box;margin:0;padding:0;}
+body, html{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;scroll-behavior:smooth;height:100%;background:#f8f9fa;color:#333;}
+h1,h2,h3,h4{margin-bottom:15px;font-weight:600;}
+a{text-decoration:none;color:#03101a;}
+.hidden{display:none;}
+
+/* ===== Sidebar ===== */
+.sidebar{
+    position:fixed;left:0;top:0;width:220px;height:100vh;
+    background:#09044b;color:#c09898;padding-top:20px;display:flex;flex-direction:column;
+    box-shadow:2px 0 10px rgba(0,0,0,0.1);
+}
+.sidebar a{
+    padding:14px 20px;font-weight:500;border-radius:6px;margin-bottom:6px;transition:0.3s;color:#fff;
+}
+.sidebar a:hover, .sidebar a.active{background:#e39bf1;color:#fff;}
+
+/* ===== Main ===== */
+.main{margin-left:220px;}
+
+/* ===== Sections ===== */
+section{
+    height:100vh;padding:40px 50px;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+}
+section .container{
+    width:90%;max-width:1000px;
+    background:#e39bf1;border-radius:15px;padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    height:100%;overflow-y:auto;
+}
+.card{
+    background:#f1f5f9;padding:20px;border-radius:12px;margin:15px 0;
+    text-align:center;box-shadow:0 5px 15px rgba(0,0,0,0.05);transition:0.3s;
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.1);}
+.card a{color:#8fafe2;}
+
+input,select,textarea{
+    width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #d1d5db;
+}
+textarea{height:90px;}
+label{display:block;font-weight:600;margin-top:15px;}
+button{
+    padding:12px;margin:10px 0;border:none;border-radius:10px;
+    font-weight:600;cursor:pointer;width:100%;transition:0.3s;
+}
+button:hover{opacity:0.9;}
+.btn-analyze{background:#10b981;color:white;}
+.btn-dark{background:#f59e0b;color:white;}
+.btn-download{background:#8b5cf6;color:white;}
+.btn-reset{background:#ef4444;color:white;}
+.btn-copy{background:#3b82f6;color:white;}
+
+.tag{display:inline-block;padding:6px 14px;border-radius:25px;margin:5px 5px 0 0;color:white;font-size:0.9em;}
+.tag.missing{background:#ef4444;}
+.tag.mastered{background:#10b981;}
+
+.progress-bar{background:#e5e7eb;border-radius:12px;overflow:hidden;margin-top:10px;}
+.progress{height:25px;text-align:center;color:white;transition:0.5s;background:#10b981;font-weight:600;}
+
+#chartContainer{max-width:500px;margin:30px auto;height:400px;}
+
+.footer{background:#1f2937;color:#fff;text-align:center;padding:20px;margin-top:20px;width:100%;}
+
+/* ===== Dark Mode ===== */
+.dark-mode{background:#212631;color:#e5e7eb;}
+.dark-mode .container{background:#1f2937;color:#e5e7eb;}
+.dark-mode .card{background:#374151;color:#0a0a0a;}
+.dark-mode .progress{background:#059669;}
+
+/* ===== About Section ===== */
+.about-cards{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin-top:30px;}
+.about-cards .card{min-width:200px;flex:1 1 200px;max-width:300px;background:#9dc5f0;}
+.about-cards .card:hover{transform:translateY(-2px);}
+
+/* ===== Hero Section ===== */
+#home{background: linear-gradient(135deg, #040342, #0f0642); color:white; text-align:center;}
+#home h1{font-size:3.5em; font-weight:700; text-shadow:1px 1px 5px rgba(0,0,0,0.3);}
+#home p{font-size:1.2em; max-width:600px; margin:20px auto 30px auto; line-height:1.5; text-shadow:1px 1px 3px rgba(0,0,0,0.2);}
+#home a{font-size:1.1em;}
+</style>
+</head>
+<body>
+
+<!-- ===== Sidebar ===== -->
+<div class="sidebar">
+<a href="#home" class="active">Home</a>
+<a href="#resumeSection">Resume</a>
+<a href="#jobSection">Job & Level</a>
+<a href="#analyzeSection">Analyze</a>
+<a href="#roadmapSection">Roadmap</a>
+<a href="#questionsSection">Questions</a>
+<a href="#youtubeSection">Resources</a>
+<a href="#chartSection">Chart</a>
+<a href="#aiSection">AI</a>
+<a href="#downloadSection">Download</a>
+<a href="#settingsSection">Settings</a>
+<a href="#aboutSection">About</a>
+</div>
+
+<!-- ===== Main ===== -->
+<div class="main">
+
+<!-- HOME HERO -->
+<section id="home">
+  <div class="container" style="height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+    <h1>🚀 Job Skill Gap Analyzer</h1>
+    <p>Upload your resume📄, analyze your skills📊, and get a learning roadmap🗺️.</p>
+    <div>
+      <a href="#resumeSection" style="background:#3b82f6; color:white; font-weight:bold; padding:15px 30px; border-radius:10px; margin-right:15px; box-shadow:0 5px 15px rgba(0,0,0,0.2);">Get Started</a>
+      <a href="#aboutSection" style="background:rgba(255,255,255,0.2); color:white; font-weight:bold; padding:15px 30px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.15);">About</a>
+    </div>
+  </div>
+</section>
+
+<!-- RESUME UPLOAD -->
+<section id="resumeSection">
+<div class="container">
+<h2>Upload Resume📄</h2>
+<label>Your Name:</label><input type="text" id="name">
+<label>Upload Resume (TXT, PDF, DOCX):</label>
+<input type="file" id="resume" accept=".txt,.pdf,.docx">
+<div id="resumePreview" class="card hidden"></div>
+</div>
+</section>
+
+<!-- JOB ROLE & LEVEL -->
+<section id="jobSection">
+<div class="container">
+<h2>Job Role👨‍💻 & Skill Level📈</h2>
+<label>Select Job Role:</label>
+<select id="job"></select>
+<label>Your Skill Level:</label>
+<select id="level">
+<option>Beginner</option>
+<option>Intermediate</option>
+<option>Advanced</option>
+</select>
+</div>
+</section>
+
+<!-- ANALYZE -->
+<section id="analyzeSection">
+<div class="container">
+<h2>🕵️‍♂️Analyze Skills🔍</h2>
+<button class="btn-analyze" id="analyzeBtn">Analyze Skills</button>
+<div id="result"></div>
+</div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmapSection">
+<div class="container">
+<h2>Learning Roadmap🗺️</h2>
+<div id="roadmapContent"></div>
+</div>
+</section>
+
+<!-- INTERVIEW QUESTIONS -->
+<section id="questionsSection">
+<div class="container">
+<h2>Important Interview Questions📝</h2>
+<div id="questionsContent"></div>
+</div>
+</section>
+
+<!-- YOUTUBE RESOURCES -->
+<section id="youtubeSection">
+<div class="container">
+<h2>Recommended YouTube Channels🔗📱</h2>
+<div id="youtubeContent"></div>
+</div>
+</section>
+
+<!-- SKILL CHART -->
+<section id="chartSection">
+<div class="container">
+<h2>Skill Match Chart😎</h2>
+<div id="chartContainer"><canvas id="matchChart"></canvas></div>
+</div>
+</section>
+
+<!-- AI SUGGESTIONS -->
+<section id="aiSection">
+<div class="container">
+<h2>AI Skill Recommendations🤖</h2>
+<label>Ask AI about your resume:</label>
+<textarea id="aiQuery" placeholder="Type a question like 'What skills should I improve?'"></textarea>
+<button class="btn-analyze" id="aiBtn">Get AI Suggestions</button>
+<div id="aiResult"></div>
+</div>
+</section>
+
+<!-- DOWNLOAD / COPY / RESET -->
+<section id="downloadSection">
+<div class="container">
+<h2>Download / Copy Report</h2>
+<button class="btn-download" onclick="downloadReport()">⬇ Download Report</button>
+<button class="btn-copy" onclick="copyReport()">📋 Copy Report</button>
+<button class="btn-reset" onclick="resetAnalyzer()">🔄 Reset</button>
+</div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settingsSection">
+<div class="container">
+<h2>Settings⚙️</h2>
+<button class="btn-dark" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+</div>
+</section>
+
+<!-- ABOUT -->
+<section id="aboutSection">
+  <div class="container" style="height:100%;">
+    <h1 style="font-size:2.5em;margin-bottom:20px;text-align:center;">About Skill Analyzer</h1>
+    <p style="font-size:1.2em;max-width:700px;text-align:center;margin:auto;">
+      SkillAnalyzer helps you identify your job skill gaps, provides learning roadmap, interview questions, AI suggestions, and career resources.
+    </p>
+    <p style="font-size:1em;margin-top:20px;text-align:center;">© 2026 SkillAnalyzer | Made by Keerthika ❤️</p>
+
+    <div class="about-cards">
+      <div class="card">👩‍💻 Own Project<br>Keerthika ❤️ </div>
+      <div class="card">🛠 Technologies Used<br>HTML, CSS, JS, Django, AI</div>
+      <div class="card">🔗 Project Links<br>GitHub</div>
+      <div class="card">✨ Future Updates<br>AI features, Resume Parsing</div>
+      <div class="card">📚 Resources<br>Learning roadmap, videos, interview prep</div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<div class="footer">© 2026 SkillAnalyzer | Made by Keerthi ❤️</div>
+
+<!-- JS Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+
+<script>
+// ===== Sidebar Active Link =====
+const sidebarLinks=document.querySelectorAll(".sidebar a");
+window.addEventListener("scroll",()=>{
+  let fromTop=window.scrollY+100;
+  sidebarLinks.forEach(link=>{
+    const section=document.querySelector(link.getAttribute("href"));
+    if(section.offsetTop<=fromTop && section.offsetTop+section.offsetHeight>fromTop){
+      sidebarLinks.forEach(l=>l.classList.remove("active"));
+      link.classList.add("active");
+    }
+  });
+});
+
+// ===== Fetch Dataset =====
+let dataset={};
+fetch("{% static 'dataset.json' %}")
+.then(res=>res.json())
+.then(data=>{
+    dataset=data.jobs;
+    const jobSelect=document.getElementById("job");
+    Object.keys(dataset).forEach(job=>{
+        let option=document.createElement("option");
+        option.text=job; jobSelect.add(option);
+    });
+}).catch(err=>alert("Error loading dataset: "+err));
+
+// ===== Dark Mode =====
+function toggleDarkMode(){document.body.classList.toggle("dark-mode");}
+
+// ===== Resume Reading =====
+function readResume(file,callback){
+    if(file.name.endsWith(".txt")){const reader=new FileReader();reader.onload=e=>callback(e.target.result);reader.readAsText(file);}
+    else if(file.name.endsWith(".pdf")){const reader=new FileReader();reader.onload=async e=>{const pdf=await pdfjsLib.getDocument({data:new Uint8Array(e.target.result)}).promise;let text="";for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const content=await page.getTextContent();text+=content.items.map(t=>t.str).join(" ")+"\n";}callback(text);};reader.readAsArrayBuffer(file);}
+    else if(file.name.endsWith(".docx")){const reader=new FileReader();reader.onload=async e=>{const result=await mammoth.extractRawText({arrayBuffer:e.target.result});callback(result.value);};reader.readAsArrayBuffer(file);}
+    else{alert("Unsupported file type!");return;}
+}
+document.getElementById("resume").addEventListener("change",function(e){
+    const file=e.target.files[0];
+    if(file){
+        readResume(file,text=>{
+            const preview=document.getElementById("resumePreview");
+            preview.innerText=text.slice(0,200)+"...";
+            preview.classList.remove("hidden");
+        });
+    }
+});
+
+// ===== Skill Matching & Chart =====
+function skillMatchPercentage(text,skills){
+  let matched=[], missing=[];
+  skills.forEach(skill=>{
+    if(text.toLowerCase().includes(skill.toLowerCase())) matched.push(skill);
+    else missing.push(skill);
+  });
+  return {matched, missing};
+}
+
+document.getElementById("analyzeBtn").addEventListener("click",function(){
+  const file=document.getElementById("resume").files[0];
+  const selectedJob=document.getElementById("job").value;
+  if(!file){alert("Upload resume");return;}
+  if(!dataset[selectedJob]){alert("Job not found");return;}
+  readResume(file,text=>{
+    const skills=dataset[selectedJob].skills;
+    const {matched, missing}=skillMatchPercentage(text,skills);
+    const percent=Math.round((matched.length/skills.length)*100);
+
+    // Result
+    const resultDiv=document.getElementById("result");
+    resultDiv.innerHTML=`<h3>Match: ${percent}%</h3>
+      <div class="progress-bar"><div class="progress" style="width:${percent}%">${percent}%</div></div>
+      <h4>Mastered Skills:</h4>${matched.map(s=>`<span class="tag mastered">${s}</span>`).join(", ")}
+      <h4>Missing Skills:</h4>${missing.map(s=>`<span class="tag missing">${s}</span>`).join(", ")}`;
+
+    // Roadmap
+    const roadmapContent=document.getElementById("roadmapContent"); roadmapContent.innerHTML=""; missing.forEach(s=>roadmapContent.innerHTML+=`<div class="card">Learn ${s}</div>`);
+
+    // Questions
+    const questionsContent=document.getElementById("questionsContent"); questionsContent.innerHTML=""; dataset[selectedJob].questions.forEach(q=>questionsContent.innerHTML+=`<div class="card">${q}</div>`);
+
+    // YouTube
+    const youtubeContent=document.getElementById("youtubeContent"); youtubeContent.innerHTML=""; dataset[selectedJob].youtube.forEach(ch=>youtubeContent.innerHTML+=`<div class="card"><a href="${ch.link}" target="_blank">${ch.skill} → ${ch.link}</a></div>`);
+
+    // Chart with skill names
+    const ctx=document.getElementById("matchChart").getContext('2d');
+    if(window.matchChartInstance) window.matchChartInstance.destroy();
+    window.matchChartInstance=new Chart(ctx,{
+      type:'doughnut',
+      data:{
+        labels:[...matched,...missing],
+        datasets:[{data:[...Array(matched.length).fill(1),...Array(missing.length).fill(1)],
+          backgroundColor:[...Array(matched.length).fill('#10b981'),...Array(missing.length).fill('#ef4444')]}]
+      },
+      options:{plugins:{legend:{position:'bottom'}, tooltip:{callbacks:{label:function(ctx){return ctx.label;}}}},responsive:true,maintainAspectRatio:false}
+    });
+  });
+});
+
+// Copy / Download / Reset
+function copyReport(){const r=document.getElementById("result");if(!r.innerText.trim()){alert("Analyze first!");return;}navigator.clipboard.writeText(r.innerText).then(()=>alert("Report copied!"));}
+function downloadReport(){const r=document.getElementById("result");if(!r.innerText.trim()){alert("Analyze first!");return;}const blob=new Blob([r.innerText],{type:'text/plain'});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="Skill_Report.txt";a.click();}
+function resetAnalyzer(){document.getElementById("resumePreview").innerHTML="";document.getElementById("roadmapContent").innerHTML="";document.getElementById("questionsContent").innerHTML="";document.getElementById("youtubeContent").innerHTML="";if(window.matchChartInstance)window.matchChartInstance.destroy();document.getElementById("result").innerHTML="";document.getElementById("name").value="";document.getElementById("resume").value="";document.getElementById("level").selectedIndex=0;document.getElementById("job").selectedIndex=0;document.getElementById("aiQuery").value="";}
+
+// AI Suggestions
+document.getElementById("aiBtn").addEventListener("click", async function(){
+    const query=document.getElementById("aiQuery").value.trim();
+    if(!query){alert("Type something!");return;}
+    document.getElementById("aiResult").innerHTML="Thinking... 🤖";
+    try{
+        const res=await fetch("/ai/",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:query})});
+        const data=await res.json();
+        let reply=data.reply||data.error||"No response 😢";
+        document.getElementById("aiResult").innerHTML=`<div class="card">${reply}</div>`;
+    }catch(e){document.getElementById("aiResult").innerHTML="Error 😢 Backend issue";}
+});
+</script>
+
+</body>
+</html>
